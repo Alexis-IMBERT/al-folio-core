@@ -20,24 +20,27 @@ Gem::Specification.new do |spec|
     "source_code_uri" => spec.homepage,
   }
 
-  tracked_files = `git ls-files -z 2>/dev/null`.split("\x0")
-  candidate_files = if tracked_files.empty?
-                      Dir[
-                        "lib/**/*",
-                        "migrations/**/*",
-                        "scripts/**/*",
-                        "_scripts/**/*",
-                        "_includes/**/*",
-                        "_layouts/**/*",
-                        "_sass/**/*",
-                        "assets/**/*",
-                        "LICENSE",
-                        "README.md",
-                        "CHANGELOG.md",
-                      ]
-                    else
-                      tracked_files
-                    end
+  gem_root = File.expand_path(__dir__)
+  tracked_files = Dir.chdir(gem_root) { `git ls-files -z 2>/dev/null`.split("\x0") }
+  candidate_files = Dir.chdir(gem_root) do
+    if tracked_files.empty?
+      Dir[
+        "lib/**/*",
+        "migrations/**/*",
+        "scripts/**/*",
+        "_scripts/**/*",
+        "_includes/**/*",
+        "_layouts/**/*",
+        "_sass/**/*",
+        "assets/**/*",
+        "LICENSE",
+        "README.md",
+        "CHANGELOG.md",
+      ]
+    else
+      tracked_files
+    end
+  end
   allowed_prefixes = %w[lib/ migrations/ scripts/ _scripts/ _includes/ _layouts/ _sass/ assets/]
   allowed_literals = %w[LICENSE README.md CHANGELOG.md]
   spec.files = candidate_files.select do |path|
