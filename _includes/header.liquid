@@ -86,9 +86,19 @@
                       {% if child.title == 'divider' %}
                         <div class="dropdown-divider"></div>
                       {% else %}
+                        {% if p.page_id == 'languages' and child.lang %}
+                          {% assign language_permalink = page.permalink_lang[child.lang] | default: page.permalink %}
+                          {% if child.lang == site.default_lang %}
+                            {% assign language_url = language_permalink %}
+                          {% else %}
+                            {% assign language_url = language_permalink | prepend: child.lang | prepend: '/' %}
+                          {% endif %}
+                        {% else %}
+                          {% assign language_url = child.permalink %}
+                        {% endif %}
                         <a
                           class="dropdown-item {% if page.title == child.title %}active{% endif %}"
-                          href="{% if child.permalink contains '://' %}{{ child.permalink }}{% else %}{{ child.permalink | relative_url }}{% endif %}"
+                          {% if p.page_id == 'languages' and child.lang %}{% static_href %}href="{{ language_url }}"{% endstatic_href %}{% else %}href="{% if language_url contains '://' %}{{ language_url }}{% else %}{{ language_url | relative_url }}{% endif %}"{% endif %}
                         >
                           {{- child.title -}}
                         </a>
