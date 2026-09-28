@@ -212,6 +212,14 @@ module AlFolioCore
     vendored_bundle_prefix = File.join(expanded_site_source, "vendor", "bundle") + File::SEPARATOR
     return false if expanded_asset_path.start_with?(vendored_bundle_prefix)
 
+    # Local path checkouts / submodules for gems under `gems/**` or the theme root
+    # are external runtime assets, not local source overrides.
+    theme_root_prefix = File.join(File.expand_path(THEME_ROOT), "")
+    return false if expanded_asset_path.start_with?(theme_root_prefix)
+
+    vendored_gems_prefix = File.join(expanded_site_source, "gems") + File::SEPARATOR
+    return false if expanded_asset_path.start_with?(vendored_gems_prefix)
+
     true
   end
 
